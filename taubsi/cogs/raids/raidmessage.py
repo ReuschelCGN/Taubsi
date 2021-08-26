@@ -172,6 +172,7 @@ class RaidMessage:
 
     members: List[RaidMember]
     remotes: List[int]
+    invites: List[int]
     lates: List[int]
 
     notified_5_minutes: bool = False
