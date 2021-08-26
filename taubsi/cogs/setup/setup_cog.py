@@ -65,7 +65,7 @@ class Setup(commands.Cog):
         user.name = name
         await user.update()
 
-    @commands.command(aliases=["code", "freund"])
+    @commands.command(aliases=["code", "freund", "friend"])
     @commands.check(is_guild)
     async def trainercode(self, ctx, *, arg):
         member = None
