@@ -4,6 +4,7 @@ from taubsi.utils.logging import logging
 from taubsi.cogs.setup.errors import *
 from taubsi.taubsi_objects import tb
 from taubsi.cogs.setup.objects import TaubsiUser
+from config.emotes import *
 from taubsi.utils.errors import command_error, TaubsiError
 from taubsi.utils.checks import is_guild
 from taubsi.utils.enums import Team
@@ -66,32 +67,54 @@ class Setup(commands.Cog):
 
     @commands.command(aliases=["code", "freund"])
     @commands.check(is_guild)
-    async def trainercode(self, ctx, *, arg=None):
+    async def trainercode(self, ctx, *, arg):
         member = None
         try:
             member = await commands.MemberConverter().convert(ctx, arg)
         except:
             member = ctx.author
-        
+
         user = TaubsiUser()
         await user.from_command(member)
 
-        if member or arg is None:
+        if member and arg == "anzeigen":
             if not user.friendcode:
                 raise NoCodeSet
             await ctx.send(f"`{user.friendcode}`")
 
         else:
-            if isinstance(arg, str):
+            if isinstance(arg, str) and arg != "anzeigen":
                 try:
-                    arg = int(arg.replace(" ", ""))
+                    arg = str(arg.replace(" ", ""))
                 except:
                     raise WrongCodeFormat
-            user = TaubsiUser()
-            await user.from_command(ctx.author)
-            user.friendcode = int(arg)
-            await user.update()
+            if arg.isdigit():
+                user = TaubsiUser()
+                await user.from_command(ctx.author)
+                user.friendcode = str(arg)
+                await user.update()
             await self.reponse(ctx, tb.translate("tb_saved_code"))
+            else:
+                    raise WrongCodeFormat
+
+    @commands.command(aliases=["einladen", "einladung", "inv"])
+    @commands.check(is_guild)
+    async def invtrainercode(self, ctx):
+        member = None
+        try:
+            member = await commands.MemberConverter().convert(ctx)
+        except:
+            member = ctx.author
+
+        user = TaubsiUser()
+        await user.from_command(member)
+
+        if member:
+            if not user.friendcode:
+                raise NoCodeSet
+            msg = await ctx.send(f"`{user.friendcode}`" + "  " + CONTROL_EMOJIS["invite"] + "  " + f"`{user.name}`")
+            await msg.add_reaction("âœ…")
+            await msg.add_reaction("â›”")
 
     def __team_aliases(self, team_name):
         aliases = {
@@ -126,7 +149,6 @@ class Setup(commands.Cog):
         user.team = team
         await user.update()
         await self.reponse(ctx, tb.translate("setup_team").format(team.name.lower().capitalize()))
-
 
 def setup(bot):
     bot.add_cog(Setup(bot))
