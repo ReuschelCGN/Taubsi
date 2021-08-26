@@ -1,14 +1,6 @@
 # Taubsi 2.0
 
-## Quick disclaimer
-
-This is a raid bot i designed specifically to suit the needs of my community. Initially I put it on GitHub to streamline my personal workflow, however people were interested in the project and I decided to implement some things to make it work more universally.
-
-Because of this, I don't like to take suggestions or help with any issues you have. Regardless, feel free to do the following:
-
-- Open an issue on GitHub if you have a good suggestion
-- DM me if you desperately need help
-- If you think you encountered a bug, DM me about it first, then open an issue
+This is a raid bot designed specifically to suit the needs of my community.
 
 ## Features
 
@@ -52,32 +44,45 @@ If you have a role called `RaidNotifications` or `RaidNachrichten` (whatever lan
 
 ![image](https://media.discordapp.net/attachments/604038147109683200/877618125439389786/unknown.png)
 
-### Setup
+### Commands to interact with the BOT
 
-#### Team Choose channels
+in Setup Channel:
 
-- A list of team choose channels can be defined
-- A team choose channel should only have on message with 3 reactions for each team. The emojis should be called `mystic`, `instinct`, `valor`
-- Set the permissions so nobody can add reactions
+ `!name TRAINERNAME` -> your PoGo Trainer Name
+ 
+ `!lvl TRAINERLEVEL` -> add your Trainer Level to Nickname
+ 
+ `!lvlup` -> Trainer Level +1
+ 
+ `!code FRIENDCODE` -> add your Friendcode (!code 123412341234)
+ 
+ `!code anzeigen` - > shows your stored friendcode
+ 
+ `!team COLOR` -> add your Teamcolor
+ 
+in Raid Channel:
 
-The goal is that new players can easily set their team by clicking on the team logo. This will give them a role, which is then used to determine the team in raid dialogs. You can also give the team roles their color.
+ `GYM-Name HH:MM`
+ 
+ `!inv` -> for Invitation  (Hint: `!inv @MAXMUSTERMAN` for Invitation from User MAXMUSTERMAN)
 
-There's also a team command that should be used more rarely. `!team [team]`. This is hardcoded to accept a few strings, mainly made for German
+# INSTALLATION
 
-### Naming
+1. Clone repository `git clone https://github.com/ReuschelCGN/Taubsi`
+2. Copy content of `docker-compose.yml` into your running `docker-compose.yml`
+3. Create a new bot in Discord, assign rights and invite to your server!
+4. Create a new database with name `taubsi` collation `utf8mb4_unicode_ci` and import `./sql/taubsi.sql` into it.
+5. Rename folder `config_example` to `config` and fill out the files:
+   - `config.json`
+   - `geofence.json`
+   - `servers.json`
+6. Insert your own Team emojis into -> `./config/emotes.py` if desired
+7. `sudo docker-compose build taubsi`
+8. `sudo docker-compose up -d taubsi`
 
-- No one should be able to change their nickname
-- Each player will have their level displayed in front of their name. E.g. `[49] Malte`
-- Use `!level [lvl]` or `!l [lvl]` or `!lvl [lvl]` to set your level
-- Use `!levelup` or `!lvlup` or `!up` to add +1 to your level
-- Use `!name [name]` or `!n [name]` to set your name
+get logs: `sudo docker-compose logs -f taubsi`
 
-# Setup
+# Additional IMPORTANT Infos:
+This is a Fork from Maltes Taubsi Raidbot -> https://github.com/ccev/Taubsi
 
-I'm not going into detail for setup. Basically you're going to make a new DB and use the sql commands in the sql/ folde on it. Then you're going to copy the config/ folder and fill in config.json, servers.json, geofence.json (poracle/my tools format) and emotes.py (needs some custom emojis)
-
-Now you're going to make a venv (important!) and install the requirements in it.
-
-Now install discord.py 2.0 in it using `/path/to/venv/pip3 install git+https://github.com/Rapptz/discord.py.git`
-
-Now run start_taubsi.py and it should be fine.
+Many thanks to him for his original!
