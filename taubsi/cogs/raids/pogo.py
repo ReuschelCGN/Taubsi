@@ -1,5 +1,7 @@
+from __future__ import annotations
 import random
 from io import BytesIO
+from typing import Union
 
 import discord
 import arrow
@@ -24,7 +26,7 @@ class Gym:
 
         self.active_raid = None
 
-    async def get_active_raid(self, level):
+    async def get_active_raid(self, level: int) -> Union[BaseRaid, ScannedRaid]:
         query = (
             f"select level, pokemon_id, form, costume, start, end, move_1, move_2, evolution "
             f"from raid "

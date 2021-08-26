@@ -1,3 +1,6 @@
+from __future__ import annotations
+from typing import NoReturn, List, Callable, Optional
+
 import discord
 import arrow
 
@@ -5,7 +8,7 @@ from math import floor
 
 from taubsi.taubsi_objects import tb
 from taubsi.cogs.raids.raidmessage import GMAPS_LINK, AMAPS_LINK, RaidMessage
-from taubsi.cogs.raids.pogo import ScannedRaid
+from taubsi.cogs.raids.pogo import ScannedRaid, Gym
 
 
 TIMEFORMAT_SHORT = tb.translate("timeformat_short")
@@ -13,7 +16,7 @@ TIMEFORMAT_LONG = tb.translate("timeformat_long")
 
 
 class InfoTimeButton(discord.ui.Button):
-    def __init__(self, raidinfo, time):
+    def __init__(self, raidinfo: RaidInfo, time: arrow.Arrow):
         self.time = time.to("local")
         label = self.time.strftime(TIMEFORMAT_SHORT)
         self.raidinfo = raidinfo
@@ -21,25 +24,26 @@ class InfoTimeButton(discord.ui.Button):
         super().__init__(style=discord.ButtonStyle.grey, label=label,
                          custom_id=str(self.raidinfo.gym.id) + "_" + label)
 
-    async def callback(self, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction) -> NoReturn:
         self.disabled = True
         await interaction.message.edit(embed=self.raidinfo.embed, view=self.view)
+        await interaction.response.defer()
 
         if self.time < arrow.now().shift(minutes=4):
             return
 
         for channel_id in self.raidinfo.post_to:
-            raidmessage = RaidMessage()
-            await raidmessage.from_raidinfo(self.raidinfo.gym, self.raidinfo.raid, self.time,
-                                            interaction, channel_id)
+            raidmessage = await RaidMessage.from_raidinfo(self.raidinfo.gym, self.raidinfo.raid, self.time,
+                                                          interaction, channel_id)
             await self.raidinfo.create_raid(raidmessage)
 
 
 class RaidInfoView(discord.ui.View):
-    def __init__(self, raidinfo):
+    def __init__(self, raidinfo: RaidInfo):
         super().__init__(timeout=None)
 
-        if raidinfo.time_left(raidinfo.raid.end)[0] < 9:
+        seconds_left = raidinfo.raid.end.int_timestamp - arrow.utcnow().int_timestamp
+        if floor(seconds_left / 60) < 9:
             return
 
         if raidinfo.raid.start < arrow.utcnow():
@@ -56,23 +60,52 @@ class RaidInfoView(discord.ui.View):
 
 
 class RaidInfo:
-    def __init__(self, gym):
+    gym: Gym
+    raid: ScannedRaid
+
+    embed: discord.Embed
+    messages: List[discord.Message]
+    channels: List[discord.TextChannel]
+    post_to: List[int]
+    view: Optional[RaidInfoView]
+
+    hatched: bool
+    create_raid: Callable
+
+    def __init__(self, gym: Gym):
         self.gym = gym
-
-        self.raid = None
-        self.embed = discord.Embed()
-        self.messages = []
-        self.hatched = False
-
-        self.channels = []
-        self.post_to = []
-
         raid_cog = tb.bot.get_cog("RaidCog")
         self.create_raid = raid_cog.create_raid
 
+        self.embed = discord.Embed()
+        self.messages = []
+        self.channels = []
+        self.post_to = []
         self.view = None
+        self.hatched = False
 
-    def _make_raid(self, db_raid):
+    @classmethod
+    async def from_db(cls, gym: Gym, db_raid, channel_settings) -> Optional[RaidInfo]:
+        self = cls(gym)
+        for channel_setting in channel_settings:
+            if db_raid[1] not in channel_setting.get("levels", []):
+                continue
+
+            channel_id = channel_setting["id"]
+            channel = await tb.bot.fetch_channel(channel_id)
+            self.channels.append(channel)
+            self.post_to += channel_setting.get("post_to", [])
+
+        if not self.channels:
+            return None
+
+        self._make_raid(db_raid)
+        self.make_embed()
+        await self.send_message()
+
+        return self
+
+    def _make_raid(self, db_raid: tuple) -> NoReturn:
         gym_id, level, mon_id, form, costume, start, end, move_1, move_2, evolution = db_raid
 
         start = arrow.get(start)
@@ -85,37 +118,13 @@ class RaidInfo:
         move1 = tb.pogodata.get_move(id=move_1)
         move2 = tb.pogodata.get_move(id=move_2)
         self.raid = ScannedRaid(self.gym, move1, move2, start, end, mon, level)
-
-    async def from_db(self, db_raid, channel_settings):
-        for channel_setting in channel_settings:
-            if not db_raid[1] in channel_setting.get("levels", []):
-                continue
-
-            channel_id = channel_setting["id"]
-            channel = await tb.bot.fetch_channel(channel_id)
-            self.channels.append(channel)
-            self.post_to += channel_setting.get("post_to", [])
-
-        if not self.channels:
-            return False
-
-        self._make_raid(db_raid)
-        self.make_embed()
-        await self.send_message()
-
-        return True
     
-    async def has_hatched(self, db_raid):
+    async def has_hatched(self, db_raid: tuple) -> NoReturn:
         self._make_raid(db_raid)
         self.make_embed()
         await self.edit_message()
 
-    @staticmethod
-    def time_left(time):
-        seconds_between = time.int_timestamp - arrow.utcnow().int_timestamp
-        return floor(seconds_between / 60), seconds_between % 60
-
-    def make_embed(self):
+    def make_embed(self) -> NoReturn:
         formatted_end = self.raid.end.to("local").strftime(TIMEFORMAT_LONG)
         self.embed.title = self.raid.name
 
@@ -148,7 +157,7 @@ class RaidInfo:
 
         self.embed.set_author(name=self.gym.name, icon_url=self.gym.img)
 
-    def get_view(self):
+    def get_view(self) -> Optional[RaidInfoView]:
         if self.view and self.raid.boss:
             view = RaidInfoView(self)
         elif not self.view and self.post_to:
@@ -158,7 +167,7 @@ class RaidInfo:
 
         return view
 
-    async def update_buttons(self):
+    async def update_buttons(self) -> NoReturn:
         if not self.view:
             return
 
@@ -171,13 +180,13 @@ class RaidInfo:
         if len(new_view.children) != len(self.view.children):
             await self.edit_message(new_view)
 
-    async def send_message(self):
+    async def send_message(self) -> NoReturn:
         self.view = self.get_view()
         for channel in self.channels:
             message = await channel.send(embed=self.embed, view=self.view)
             self.messages.append(message)
 
-    async def edit_message(self, view=None):
+    async def edit_message(self, view: Optional[RaidInfoView] = None) -> NoReturn:
         if not view:
             self.view = self.get_view()
         else:
@@ -185,6 +194,6 @@ class RaidInfo:
         for message in self.messages:
             await message.edit(embed=self.embed, view=self.view)
 
-    async def delete(self):
+    async def delete(self) -> NoReturn:
         for message in self.messages:
             await message.delete()

@@ -47,9 +47,8 @@ class InfoCog(commands.Cog):
                 raidinfo = self.raid_infos.get(gym.id)
 
                 if raidinfo is None:
-                    raidinfo = RaidInfo(gym)
-                    is_cool = await raidinfo.from_db(db_raid, tb.info_channels[guild_id])
-                    if is_cool:
+                    raidinfo = await RaidInfo.from_db(gym, db_raid, tb.info_channels[guild_id])
+                    if raidinfo:
                         self.raid_infos[gym.id] = raidinfo
                     continue
 

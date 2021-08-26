@@ -45,8 +45,7 @@ class ChoiceMessage:
 
     async def button_clicked(self, gym):
         await self.message.delete()
-        raidmessage = RaidMessage()
-        await raidmessage.from_command(gym, self.start_time, self.init_message)
+        raidmessage = await RaidMessage.from_command(gym, self.start_time, self.init_message)
 
         self.cog.choicemessages.pop(self.message.id)
         await self.cog.create_raid(raidmessage)
