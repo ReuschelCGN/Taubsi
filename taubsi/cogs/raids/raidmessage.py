@@ -88,7 +88,7 @@ class RaidmessageView(discord.ui.View):
         await member.make_role()
         await member.db_insert()
 
-    @discord.ui.button(label="Mit Fern-Pass", style=discord.ButtonStyle.blurple, emoji="<:fernraid:728917159216021525>")
+    @discord.ui.button(label="Mit Fern-Pass", style=discord.ButtonStyle.blurple, emoji="✈")
     async def remote(self, button: discord.ui.Button, interaction: discord.Interaction):
         member = self.raidmessage.get_member(interaction.user.id)
         if not member:
@@ -99,6 +99,23 @@ class RaidmessageView(discord.ui.View):
             self.raidmessage.remotes.remove(interaction.user.id)
         else:
             self.raidmessage.remotes.append(interaction.user.id)
+
+        member.update()
+        await self.raidmessage.make_member_fields()
+        await member.make_role()
+        await member.db_insert()
+
+    @discord.ui.button(label="Mit Einladung", style=discord.ButtonStyle.blurple, emoji="📩")
+    async def invite(self, button: discord.ui.Button, interaction: discord.Interaction):
+        member = self.raidmessage.get_member(interaction.user.id)
+        if not member:
+            member = RaidMember(self.raidmessage, interaction.user.id, 1)
+            self.raidmessage.members.append(member)
+
+        if interaction.user.id in self.raidmessage.invites:
+            self.raidmessage.invites.remove(interaction.user.id)
+        else:
+            self.raidmessage.invites.append(interaction.user.id)
 
         member.update()
         await self.raidmessage.make_member_fields()
@@ -156,6 +173,7 @@ class RaidMessage:
 
         self.members = []
         self.remotes = []
+        self.invites = []
         self.lates = []
 
         self.notified_5_minutes = False
@@ -214,12 +232,14 @@ class RaidMessage:
         self.author_id = self.init_message.author.id
 
         raidmember_db = await tb.intern_queries.execute(
-            f"select user_id, amount, is_late, is_remote from raidmembers where message_id = {self.message.id}")
+            f"select user_id, amount, is_late, is_remote, is_invite from raidmembers where message_id = {self.message.id}")
         for entry in raidmember_db:
             if entry[2]:
                 self.lates.append(entry[0])
             if entry[3]:
                 self.remotes.append(entry[0])
+            if entry[4]:
+                self.invites.append(entry[0])
             raidmember = RaidMember(self, entry[0], entry[1])
             self.members.append(raidmember)
 
@@ -263,6 +283,8 @@ class RaidMessage:
                 to_notify = True
             elif control == "remote":
                 self.remotes.append(payload.user_id)
+            elif control == "invite":
+                self.invites.append(payload.user_id)
 
         elif emote in NUMBER_EMOJIS.values():
             amount = reverse_get(NUMBER_EMOJIS, emote)
@@ -296,6 +318,8 @@ class RaidMessage:
                     await self.notify(tb.translate("notify_on_time").format(member.member.display_name), member.member)
             elif control == "remote":
                 self.remotes.remove(payload.user_id)
+            elif control == "invite":
+                self.invites.remove(payload.user_id)
 
         elif emote in NUMBER_EMOJIS.values():
             if member.amount > 0:
@@ -455,7 +479,7 @@ class RaidMessage:
 
         self.warnings.clear()
 
-        total_remote = sum(m.amount for m in self.members if m.is_remote)
+        total_remote = (sum(m.amount for m in self.members if m.is_remote) + sum(m.amount for m in self.members if m.is_invite))
         remote_cap = (total_remote > REMOTE_LIMIT - 2)
         total_cap = (self.total_amount > TOTAL_LIMIT - 2)
         if remote_cap and total_cap:
