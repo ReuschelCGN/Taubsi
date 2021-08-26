@@ -4,14 +4,15 @@ NUMBER_EMOJIS = {
 
 CONTROL_EMOJIS = {
     "late": "🕐",
-    "remote": "<:fernraid:1234567899323215>",
+    "remote": "✈",
+    "invite": "📩",
     "remove": "❌"
 }
 
 TEAM_EMOJIS = {
-    1: "<:team_blau:1234567899323212>",
-    2: "<:team_rot:1234567899323213>",
-    3: "<:team_gelb:1234567899323214>"
+    1: "🟦 ",
+    2: "🟥 ",
+    3: "🟨 "
 }
 
 DIFFICULTY_NAMES = {
