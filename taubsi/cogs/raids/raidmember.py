@@ -9,6 +9,7 @@ log = logging.getLogger("Raids")
 class RaidMember:
     is_late: bool
     is_remote: bool
+    is_invite: bool
     amount: int
 
     def __init__(self, raidmessage, user_id, amount):
