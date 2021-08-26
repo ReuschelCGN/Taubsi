@@ -94,8 +94,6 @@ class Setup(commands.Cog):
                 user.friendcode = str(arg)
                 await user.update()
             await self.reponse(ctx, tb.translate("tb_saved_code"))
-            else:
-                    raise WrongCodeFormat
 
     @commands.command(aliases=["einladen", "einladung", "inv", "invite", "invitation"])
     @commands.check(is_guild)
