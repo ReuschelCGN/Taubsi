@@ -33,6 +33,7 @@ class RaidMember:
     def update(self, amount=None):
         self.is_late = self.member.id in self.raidmessage.lates
         self.is_remote = self.member.id in self.raidmessage.remotes
+        self.is_invite = self.member.id in self.raidmessage.invites
 
         if amount is not None:
             self.amount = amount
@@ -51,6 +52,8 @@ class RaidMember:
             text = CONTROL_EMOJIS["late"] + " " + text
         if self.is_remote:
             text = CONTROL_EMOJIS["remote"] + " " + text
+        if self.is_invite:
+            text = text + " " + CONTROL_EMOJIS["invite"]
         return text + "\n"
 
     async def db_insert(self):
@@ -59,6 +62,7 @@ class RaidMember:
             "user_id": self.member.id,
             "amount": self.amount,
             "is_late": self.is_late,
-            "is_remote": self.is_remote
+            "is_remote": self.is_remote,
+            "is_invite": self.is_invite
         }
         await tb.intern_queries.insert("raidmembers", keyvals)
