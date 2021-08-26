@@ -1,5 +1,7 @@
+from __future__ import annotations
 import json
 from math import floor, ceil
+from typing import List, Set, Optional, TYPE_CHECKING, NoReturn, Union
 
 import discord
 import arrow
@@ -11,6 +13,9 @@ from taubsi.taubsi_objects import tb
 from config.emotes import *
 from taubsi.cogs.raids.raidmember import RaidMember
 from taubsi.cogs.raids.pogo import Gym, BaseRaid, ScannedRaid
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 log = logging.getLogger("Raids")
 
@@ -88,7 +93,7 @@ class RaidmessageView(discord.ui.View):
         await member.make_role()
         await member.db_insert()
 
-    @discord.ui.button(label="Mit Fern-Pass", style=discord.ButtonStyle.blurple, emoji="✈")
+    @discord.ui.button(label="Mit Fern-Pass", style=discord.ButtonStyle.blurple, emoji="<:fernraid:728917159216021525>")
     async def remote(self, button: discord.ui.Button, interaction: discord.Interaction):
         member = self.raidmessage.get_member(interaction.user.id)
         if not member:
@@ -99,23 +104,6 @@ class RaidmessageView(discord.ui.View):
             self.raidmessage.remotes.remove(interaction.user.id)
         else:
             self.raidmessage.remotes.append(interaction.user.id)
-
-        member.update()
-        await self.raidmessage.make_member_fields()
-        await member.make_role()
-        await member.db_insert()
-
-    @discord.ui.button(label="Mit Einladung", style=discord.ButtonStyle.blurple, emoji="📩")
-    async def invite(self, button: discord.ui.Button, interaction: discord.Interaction):
-        member = self.raidmessage.get_member(interaction.user.id)
-        if not member:
-            member = RaidMember(self.raidmessage, interaction.user.id, 1)
-            self.raidmessage.members.append(member)
-
-        if interaction.user.id in self.raidmessage.invites:
-            self.raidmessage.invites.remove(interaction.user.id)
-        else:
-            self.raidmessage.invites.append(interaction.user.id)
 
         member.update()
         await self.raidmessage.make_member_fields()
@@ -149,97 +137,100 @@ class RaidmessageView(discord.ui.View):
 
 
 class RaidMessage:
-    def __init__(self):
+    text: str
+    embed: discord.Embed
+    start_time: arrow.Arrow
+    raid: Union[BaseRaid, ScannedRaid]
+
+    channel_id: int
+    message: discord.Message
+    init_message: Optional[discord.Message]
+    author_id: Optional[int]
+
+    role: discord.Role
+    view: RaidmessageView
+    footer_prefix: str
+    warnings: Set[str]
+    static_warnings: Set[str]
+
+    members: List[RaidMember]
+    remotes: List[int]
+    lates: List[int]
+
+    notified_5_minutes: bool = False
+
+    def __init__(self, gym: Gym, start: arrow.Arrow, channel_id: int):
         self.embed = discord.Embed()
-        self.channel_settings = None
 
-        self.channel_id = 0
-        self.message_id = 0
-        self.message = None
-        self.init_message_id = 0
-        self.init_message = None
-        self.author_id = 0
+        self.gym = gym
+        self.start_time = start
+        self.channel_id = channel_id
 
-        self.start_time = arrow.get(2020, 1, 1, 12, 0)
-        self.role = None
-        self.view = None
+        self.channel_settings = tb.raid_channels[self.channel_id]
 
-        self.gym = Gym()
-        self.raid = None
-
+        self.text = ""
         self.footer_prefix = ""
+        self.members = []
+        self.remotes = []
+        self.lates = []
         self.warnings = set()
         self.static_warnings = set()
 
-        self.members = []
-        self.remotes = []
-        self.invites = []
-        self.lates = []
-
-        self.notified_5_minutes = False
-
-    @property
-    def total_amount(self):
-        return sum([m.amount for m in self.members])
-
-    @property
-    def formatted_start(self):
-        return self.start_time.strftime(timeformat)
-
-    async def from_raidinfo(self, gym, raid, start_time, interaction, channel_id):
-        self.gym = gym
-        self.start_time = start_time
-        self.channel_id = channel_id
-        self.channel_settings = tb.raid_channels[self.channel_id]
+    @classmethod
+    async def from_raidinfo(cls,
+                            gym: Gym, raid: BaseRaid, start_time: arrow.Arrow,
+                            interaction: discord.Interaction, channel_id: int) -> RaidMessage:
+        self = cls(gym, start_time, channel_id)
 
         self.author_id = interaction.user.id
         self.footer_prefix = tb.translate("Scheduled_by").format(interaction.user.display_name) + "\n"
         self.raid = raid
+        self.init_message = None
+        self.view = self._get_view()
+
         await self.send_message()
+        return self
 
-    async def from_command(self, gym, start_time, init_message):
-        self.gym = gym
-
-        self.start_time = start_time
-        self.channel_id = init_message.channel.id
-        self.channel_settings = tb.raid_channels[self.channel_id]
-
-        self.init_message = init_message
-        self.init_message_id = init_message.id
-        self.author_id = self.init_message.author.id
+    @classmethod
+    async def from_command(cls, gym: Gym, start_time: arrow.Arrow, init_message: discord.Message) -> RaidMessage:
+        self = cls(gym, start_time, init_message.channel.id)
 
         self.raid = await self.gym.get_active_raid(self.channel_settings["level"])
+        self.init_message = init_message
+        self.author_id = self.init_message.author.id
+        self.view = self._get_view()
+
         await self.send_message()
+        return self
 
-    async def from_db(self, channel_id, message_id, init_message_id, start_time, gym_id, role_id):
-        self.text = ""
-        self.channel_id = channel_id
-        self.message_id = message_id
-        self.start_time = arrow.get(start_time).to("local")
-        self.init_message_id = init_message_id
-        self.channel_settings = tb.raid_channels[self.channel_id]
+    @classmethod
+    async def from_db(cls, channel_id: int, message_id: int, init_message_id: int, start_time: datetime,
+                      gym_id: int, role_id: int) -> RaidMessage:
+        start = arrow.get(start_time).to("local")
+        channel: discord.TextChannel = await tb.bot.fetch_channel(channel_id)
+        message = await channel.fetch_message(message_id)
+        gym = [g for g in tb.gyms[message.guild.id] if g.id == gym_id][0]
 
-        channel = await tb.bot.fetch_channel(self.channel_id)
-        self.message = await channel.fetch_message(self.message_id)
-        self.gym = [g for g in tb.gyms[self.message.guild.id] if g.id == gym_id][0]
+        self = cls(gym, start, channel_id)
+
+        self.message = message
         self.role = self.message.guild.get_role(role_id)
         self.raid = await self.gym.get_active_raid(self.channel_settings["level"])
 
         try:
-            self.init_message = await channel.fetch_message(self.init_message_id)
-        except:
-            self.init_message = self.message
-        self.author_id = self.init_message.author.id
+            self.init_message = await channel.fetch_message(init_message_id)
+            self.author_id = self.init_message.author.id
+        except discord.NotFound:
+            self.init_message = None
+            self.author_id = None
 
         raidmember_db = await tb.intern_queries.execute(
-            f"select user_id, amount, is_late, is_remote, is_invite from raidmembers where message_id = {self.message.id}")
+            f"select user_id, amount, is_late, is_remote from raidmembers where message_id = {self.message.id}")
         for entry in raidmember_db:
             if entry[2]:
                 self.lates.append(entry[0])
             if entry[3]:
                 self.remotes.append(entry[0])
-            if entry[4]:
-                self.invites.append(entry[0])
             raidmember = RaidMember(self, entry[0], entry[1])
             self.members.append(raidmember)
 
@@ -247,20 +238,29 @@ class RaidMessage:
         await self.make_member_fields()
         await self.make_base_embed()
         self.make_warnings()
+        self.view = self._get_view()
         await self.edit_message()
 
-    async def get_message(self):
-        channel = await tb.bot.fetch_channel(self.channel_id)
-        message = await channel.fetch_message(self.message_id)
-        return message
+        return self
 
-    def get_member(self, user_id: int):
+    def _get_view(self) -> RaidmessageView:
+        return RaidmessageView(self)
+
+    @property
+    def total_amount(self) -> int:
+        return sum([m.amount for m in self.members])
+
+    @property
+    def formatted_start(self) -> str:
+        return self.start_time.strftime(timeformat)
+
+    def get_member(self, user_id: int) -> Optional[RaidMember]:
         for member in self.members:
             if member.member.id == user_id:
                 return member
         return None
 
-    async def add_reaction(self, payload):
+    async def add_reaction(self, payload: discord.RawReactionActionEvent) -> NoReturn:
         emote = str(payload.emoji)
         member = self.get_member(payload.user_id)
         amount = None
@@ -283,10 +283,6 @@ class RaidMessage:
                 to_notify = True
             elif control == "remote":
                 self.remotes.append(payload.user_id)
-            elif control == "invite":
-                self.invites.append(payload.user_id)
-                notification = f"📩 {member.member.display_name}"
-                to_notify = True
 
         elif emote in NUMBER_EMOJIS.values():
             amount = reverse_get(NUMBER_EMOJIS, emote)
@@ -303,7 +299,7 @@ class RaidMessage:
         await member.make_role()
         await member.db_insert()
 
-    async def remove_reaction(self, payload):
+    async def remove_reaction(self, payload: discord.RawReactionActionEvent) -> NoReturn:
         member = self.get_member(payload.user_id)
         if not member:
             return
@@ -320,10 +316,6 @@ class RaidMessage:
                     await self.notify(tb.translate("notify_on_time").format(member.member.display_name), member.member)
             elif control == "remote":
                 self.remotes.remove(payload.user_id)
-            elif control == "invite":
-                self.invites.remove(payload.user_id)
-                if member.amount > 0:
-                    await self.notify(tb.translate("notify_no_invite").format(member.member.display_name), member.member)
 
         elif emote in NUMBER_EMOJIS.values():
             if member.amount > 0:
@@ -335,7 +327,7 @@ class RaidMessage:
         await member.make_role()
         await member.db_insert()
 
-    async def notify(self, message: str, user=None):
+    async def notify(self, message: str, user: Optional[discord.User] = None) -> NoReturn:
         log.info(f"Raid notification: {message}")
         for member in self.members:
             if not member.is_subscriber:
@@ -353,6 +345,7 @@ class RaidMessage:
             await member.member.send(embed=embed)
 
     async def get_difficulty(self):
+        # unused
         if not self.raid.boss:
             return None
         try:
@@ -422,19 +415,18 @@ class RaidMessage:
             log.exception(e)
             return None
 
-    def make_warnings(self):
+    def make_warnings(self) -> NoReturn:
         self.embed.description = self.text
         for warning in self.static_warnings.union(self.warnings):
             self.embed.description += "\n" + warning
 
-    async def make_base_embed(self):
+    async def make_base_embed(self) -> NoReturn:
         self.embed.title = self.raid.name + ": " + self.gym.name
         # self.embed.url = "https://google.com/"
         # difficulty = await self.get_difficulty()
 
         # Description based on what info is available
-        self.text = tb.translate("Start") + f": **{self.formatted_start}** " \
-                    + f"<t:{self.start_time.int_timestamp}:R>" + "\n\n"
+        self.text = f"{tb.translate('Start')}: **{self.formatted_start}** <t:{self.start_time.int_timestamp}:R>\n\n"
         if self.raid.boss:
             self.text += f"100%: **{self.raid.cp20}** | **{self.raid.cp25}**\n"
         if isinstance(self.raid, ScannedRaid):
@@ -447,15 +439,15 @@ class RaidMessage:
             self.text += tb.translate("Raidzeit") + f": **{format_start}** – **{format_end}**\n"
         self.make_warnings()
 
-    async def set_image(self):
+    async def set_image(self) -> NoReturn:
         url = await self.raid.get_image()
         self.embed.set_thumbnail(url=url)
         await self.edit_message()
 
-    def make_footer(self, amount: int = 0):
-        self.embed.set_footer(text=self.footer_prefix + tb.translate("Total") + f": {amount}")
+    def make_footer(self, amount: int = 0) -> NoReturn:
+        self.embed.set_footer(text=f"{self.footer_prefix}{tb.translate('Total')}: {amount}")
 
-    async def make_member_fields(self):
+    async def make_member_fields(self) -> NoReturn:
         self.embed.clear_fields()
         for team in Team:
             if team.value == 0:
@@ -483,7 +475,7 @@ class RaidMessage:
 
         self.warnings.clear()
 
-        total_remote = (sum(m.amount for m in self.members if m.is_remote) + sum(m.amount for m in self.members if m.is_invite))
+        total_remote = sum(m.amount for m in self.members if m.is_remote)
         remote_cap = (total_remote > REMOTE_LIMIT - 2)
         total_cap = (self.total_amount > TOTAL_LIMIT - 2)
         if remote_cap and total_cap:
@@ -499,11 +491,11 @@ class RaidMessage:
         self.make_warnings()
         await self.edit_message()
 
-    async def db_insert(self):
+    async def db_insert(self) -> NoReturn:
         keyvals = {
             "channel_id": self.message.channel.id,
             "message_id": self.message.id,
-            "init_message_id": self.init_message_id,
+            "init_message_id": self.init_message.id if self.init_message else 0,
             "gym_id": self.gym.id,
             "start_time": self.start_time.to("utc").naive,
             "raid_level": self.raid.level,
@@ -518,26 +510,21 @@ class RaidMessage:
 
         await tb.intern_queries.insert("raids", keyvals)
 
-    async def edit_message(self):
+    async def edit_message(self) -> NoReturn:
         log.info(f"Editing message {self.message.id}")
-        await self.message.edit(embed=self.embed, view=RaidmessageView(self))
+        await self.message.edit(embed=self.embed, view=self.view)
 
-    async def send_message(self):
+    async def send_message(self) -> NoReturn:
         channel = await tb.bot.fetch_channel(self.channel_id)
         await self.make_base_embed()
         self.make_footer()
 
-        self.message = await channel.send(embed=self.embed, view=RaidmessageView(self))
-        self.message_id = self.message.id
-
+        self.message = await channel.send(embed=self.embed, view=self.view)
         self.role = await channel.guild.create_role(name=f"{self.gym.name} ({self.formatted_start})", mentionable=True)
 
-    async def delete_role(self):
-        await self.role.delete()
-
-    async def end_raid(self):
+    async def end_raid(self) -> NoReturn:
         log.info(f"Raid {self.message.id} started. Clearing reactions and deleting its role.")
 
         await self.message.edit(embed=self.embed, view=None)
         await self.message.clear_reactions()
-        await self.delete_role()
+        await self.role.delete()
