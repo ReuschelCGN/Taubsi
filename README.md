@@ -1,4 +1,4 @@
-# Taubsi
+# Taubsi 2.0
 
 ## Quick disclaimer
 
