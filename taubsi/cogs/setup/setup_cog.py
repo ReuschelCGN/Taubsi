@@ -118,9 +118,9 @@ class Setup(commands.Cog):
 
     def __team_aliases(self, team_name):
         aliases = {
-            Team(1): ["mystic", "blau", "weisheit", "team_blau"],
-            Team(2): ["valor", "rot", "wagemut", "team_rot"],
-            Team(3): ["instinct", "gelb", "intuition", "team_gelb"]
+            Team(1): ["mystic", "blau", "weisheit", "team_blau", "blue", "team_blue"],
+            Team(2): ["valor", "rot", "wagemut", "team_rot", "red", "team_red"],
+            Team(3): ["instinct", "gelb", "intuition", "team_gelb", "yellow", "team_yellow"]
         }
         for enum, alias in aliases.items():
             if [name for name in alias if name in team_name.lower()]:
