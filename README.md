@@ -48,13 +48,13 @@ If you have a role called `RaidNotifications` or `RaidNachrichten` (whatever lan
 
 in Setup Channel:
 
- `!name TRAINERNAME` -> your PoGo Trainer Name
+ `!name NAME` -> your PoGo Trainer Name
  
- `!lvl TRAINERLEVEL` -> add your Trainer Level to Nickname
+ `!lvl LEVEL` -> add your Trainer Level to Nickname
  
  `!lvlup` -> Trainer Level +1
  
- `!code FRIENDCODE` -> add your Friendcode (!code 123412341234)
+ `!code CODE` -> add your Friendcode (!code 123412341234)
  
  `!code anzeigen` - > shows your stored friendcode
  
