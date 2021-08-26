@@ -97,7 +97,7 @@ class Setup(commands.Cog):
             else:
                     raise WrongCodeFormat
 
-    @commands.command(aliases=["einladen", "einladung", "inv"])
+    @commands.command(aliases=["einladen", "einladung", "inv", "invite", "invitation"])
     @commands.check(is_guild)
     async def invtrainercode(self, ctx):
         member = None
@@ -113,8 +113,8 @@ class Setup(commands.Cog):
             if not user.friendcode:
                 raise NoCodeSet
             msg = await ctx.send(f"`{user.friendcode}`" + "  " + CONTROL_EMOJIS["invite"] + "  " + f"`{user.name}`")
-            await msg.add_reaction("âœ…")
-            await msg.add_reaction("â›”")
+            await msg.add_reaction("✅")
+            await msg.add_reaction("⛔")
 
     def __team_aliases(self, team_name):
         aliases = {
