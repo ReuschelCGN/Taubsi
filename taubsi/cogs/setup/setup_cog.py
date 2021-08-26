@@ -93,7 +93,7 @@ class Setup(commands.Cog):
                 await user.from_command(ctx.author)
                 user.friendcode = str(arg)
                 await user.update()
-            await self.reponse(ctx, tb.translate("tb_saved_code"))
+            await self.reponse(ctx, tb.translate("setup_saved_code"))
 
     @commands.command(aliases=["einladen", "einladung", "inv", "invite", "invitation"])
     @commands.check(is_guild)
