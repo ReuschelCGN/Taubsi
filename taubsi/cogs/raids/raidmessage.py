@@ -306,7 +306,7 @@ class RaidMessage:
                 self.remotes.append(payload.user_id)
             elif control == "invite":
                 self.invites.append(payload.user_id)
-                notification = f"📩 {member.member.display_name}"
+                notification = f"📩 {member.member.display_name} {tb.translate('notify_invite')}"
                 to_notify = True
 
         elif emote in NUMBER_EMOJIS.values():
