@@ -300,7 +300,7 @@ class RaidMessage:
                     return
             elif control == "late":
                 self.lates.append(payload.user_id)
-                notification = f"🕐 {member.member.display_name}"
+                notification = f"🕐 {member.member.display_name} {tb.translate('notify_late')}"
                 to_notify = True
             elif control == "remote":
                 self.remotes.append(payload.user_id)
