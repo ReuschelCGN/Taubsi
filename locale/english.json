@@ -18,7 +18,7 @@
     "notify_on_time": "{} is on time.",
     "notify_late": " is coming 5 minutes later.",
     "notify_invite": "needs an invite!",
-    "notify_no_invite": "{} DONT needs an invite anymore.",
+    "notify_no_invite": " DONT needs an invite anymore.",
     "warn_too_many_remote": "‼️ A total of {} remote raiders can join a raid. Please coordinate accordingly!",
     "warn_too_many_total": "‼️ A total of {} players can join a raid. Please coordinate accordingly!",
     "warn_too_many_both": "‼️ A total of {} players and {} remote raiders can join a raid. Please coordinate accordingly!",
