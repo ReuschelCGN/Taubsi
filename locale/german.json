@@ -15,7 +15,7 @@
     "notify_role_name": "raidnachrichten",
     "notify_raid_starts": "‼️ Der Raid startet in 5 Minuten",
     "notify_hatched": "🐣 Es ist ein {} geschlüpft",
-    "notify_on_time": "{} kommt doch pünktlich",
+    "notify_on_time": "{} kommt doch pünktlich.",
     "notify_late": " kommt maximal fünf Minuten zu spät.",
     "notify_invite": " braucht eine Einladung!",
     "notify_no_invite": " braucht KEINE Einladung mehr.",
