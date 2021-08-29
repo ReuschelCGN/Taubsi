@@ -93,22 +93,22 @@ class BaseRaid:
                 self.name = "Mega Ei"
 
         self.egg_url = (
-            f"https://raw.githubusercontent.com/ccev/dp-assets/master/emotes/egg{self.level}.png"
+            f"https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/UICONS/raid/egg/{self.level}.png"
         )
 
         if self.boss:
             self.boss_url = (
-                f"https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Pokemon%20-%20256x256/"
-                f"{self.boss.asset}.png"
+                f"https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/UICONS/pokemon/"
+                f"{self.boss.id}.png"
             )
 
-            # hotfix
-            if self.boss.id == 888:
-                self.boss_url = "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Pokemon/" \
-                                "Addressable%20Assets/pm888.fHERO.icon.png"
-            elif self.boss.id == 889:
-                self.boss_url = "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Pokemon/" \
-                                "Addressable%20Assets/pm889.fHERO.icon.png"
+            # MEGAMONS
+            if self.boss.temp_evolution_id == 1:
+                self.boss_url = (
+                    f"https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/UICONS/pokemon/"
+                    f"{self.boss.id}_e{self.boss.temp_evolution_id}.png"
+                )
+
         else:
             self.boss_url = ""
 
@@ -130,7 +130,7 @@ class BaseRaid:
             if random.randint(1, 30) == 20:
                 # hotfix
                 if self.boss.id not in (888, 889):
-                    url = self.boss_url.replace(".png", "_shiny.png")
+                    url = self.boss_url.replace(".png", "_s.png")
                 else:
                     url = self.boss_url
             else:
