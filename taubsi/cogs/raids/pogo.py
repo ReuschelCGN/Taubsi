@@ -93,15 +93,22 @@ class BaseRaid:
                 self.name = "Mega Ei"
 
         self.egg_url = (
-            f"https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/PMSF_icons_large/eggs/{self.level}.png"
+            f"https://raw.githubusercontent.com/ccev/dp-assets/master/emotes/egg{self.level}.png"
         )
 
         if self.boss:
             self.boss_url = (
-                f"https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/PMSF_icons_large/"
-                f"pokemon_icon_{self.boss.id}_00.png"
+                f"https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Pokemon%20-%20256x256/"
+                f"{self.boss.asset}.png"
             )
 
+            # hotfix
+            if self.boss.id == 888:
+                self.boss_url = "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Pokemon/" \
+                                "Addressable%20Assets/pm888.fHERO.icon.png"
+            elif self.boss.id == 889:
+                self.boss_url = "https://raw.githubusercontent.com/PokeMiners/pogo_assets/master/Images/Pokemon/" \
+                                "Addressable%20Assets/pm889.fHERO.icon.png"
         else:
             self.boss_url = ""
 
