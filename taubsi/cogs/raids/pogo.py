@@ -98,7 +98,7 @@ class BaseRaid:
 
         if self.boss:
             self.boss_url = (
-                f"https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/PMSF_icons_large/"
+                f"https://raw.githubusercontent.com/geekygreek7/pokedave_shuffle_icons_-PMSF-/master/"
                 f"{self.boss.asset}.png"
             )
 
