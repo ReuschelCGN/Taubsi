@@ -16,7 +16,7 @@
     "notify_raid_starts": "‼️ The Raid starts in 5 minutes",
     "notify_hatched": "🐣 A {} hatched",
     "notify_on_time": "{} is on time",
-    "notify_late": "{} is coming 5 minutes later.",
+    "notify_late": " is coming 5 minutes later.",
     "notify_invite": "needs an invite!",
     "notify_no_invite": "{} DONT needs an invite anymore.",
     "warn_too_many_remote": "‼️ A total of {} remote raiders can join a raid. Please coordinate accordingly!",
