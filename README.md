@@ -30,7 +30,7 @@ There are 3 main cogs in this bot: Raid, RaidInfo, Setup.
 
 While writing the readme, I'm noticing that I've actually forgotten to implement a way to toggle this. But /shrug
 
-If you have a role called `RaidNotifications` or define the role in `config.json` -> `"notify_role": "desired Rolename"` (whatever you're using), you will receive private messages with updates on this raid. This includes messages for people joining or leaving. People clicking the clock or removing it. When the raid hatches. And when the raid is going to start in 5 minutes.
+If you have a role called `RaidNachrichten` or define the role in `config.json` -> `"notify_role": "desired Rolename"` (whatever you're using), you will receive private messages with updates on this raid. This includes messages for people joining or leaving. People clicking the clock or removing it. When the raid hatches. And when the raid is going to start in 5 minutes.
 
  
 ![image](https://user-images.githubusercontent.com/42342921/115625355-3df72f00-a2fc-11eb-9960-03338a747fa4.png)
