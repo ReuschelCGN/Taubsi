@@ -20,7 +20,7 @@ There are 3 main cogs in this bot: Raid, RaidInfo, Setup.
 - Below the dialog, there will be reactions showing numbers 1-6, a remote raid pass, a clock, a invite and a X
   - If you click on a number, you will join the raid with this amount of players
   - If you click the remote pass, a remote pass will display in front of your name indicating you're not physically there when the raid starts
-  - If you click the invite, a invite will be display behind of your name indicating you need an invitation for the raid and with `!inv` you could post your friendcode and trainername unter the raidmessage. So the other raidmember could copy&past the code direct in pokemon go.
+  - If you click the invite, a invite will be display behind of your name indicating you need an invitation for the raid and with `!inv` you could post your friendcode and trainername under the raidmessage. So the other raidmembers could copy&past the code direct in pokemon go.
   - The clock can be clicked if you're arriving max. 5 minutes too late (which should be used extremely rarely)
   - In the first 5 minutes, the creator of the raid dialog can delete it by pressing the X
 - There will also be 2 buttons: One Google Maps link and a link to Pokebattler
