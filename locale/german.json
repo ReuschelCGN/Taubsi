@@ -17,7 +17,7 @@
     "notify_on_time": "{} kommt doch pünktlich.",
     "notify_late": " kommt maximal fünf Minuten zu spät.",
     "notify_invite": " braucht eine Einladung!",
-    "notify_no_invite": " braucht KEINE Einladung mehr.",
+    "notify_no_invite": "{} braucht KEINE Einladung mehr.",
     "warn_too_many_remote": "‼️ An einem Raid können maximal {} Fern Raider teilnehmen. Passt darauf auf und sprecht euch ab!",
     "warn_too_many_total": "‼️ An einem Raid können maximal {} Spieler teilnehmen. Passt darauf auf und sprecht euch ab!",
     "warn_too_many_both": "‼️ An einem Raid können maximal {} Spieler und {} Fern Raider teilnehmen. Passt darauf auf und sprecht euch ab!",
