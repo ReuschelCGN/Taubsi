@@ -1,3 +1,4 @@
+import json
 from taubsi.utils.enums import Team
 from taubsi.utils.logging import logging
 from taubsi.taubsi_objects import tb
@@ -24,7 +25,9 @@ class RaidMember:
                 self.team = team
                 break
 
-        if tb.translate("notify_role_name") in roles:
+        with open("config/config.json") as f:
+            self.config = json.load(f)
+        if self.config["notify_role"] in roles:
             self.is_subscriber = True
         else:
             self.is_subscriber = False
