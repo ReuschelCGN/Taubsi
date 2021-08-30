@@ -12,6 +12,7 @@
     "Total": "Total",
     "choice_x_gyms": "{} Gyms were found",
     "choice_please_choose": "Please choose the one you want to schedule the raid at.",
+    "notify_role_name": "raidnotifications",
     "notify_raid_starts": "‼️ The Raid starts in 5 minutes",
     "notify_hatched": "🐣 A {} hatched",
     "notify_on_time": "{} is on time.",
