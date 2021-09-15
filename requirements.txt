@@ -3,5 +3,5 @@ arrow==1.1.0
 dateparser==1.0.0
 fuzzywuzzy==0.18.0
 Pillow==8.2.0
-pogodata>=0.5.11
+pogodata>=0.5.13
 python-Levenshtein==0.12.2
