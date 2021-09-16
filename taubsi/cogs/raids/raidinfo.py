@@ -158,14 +158,9 @@ class RaidInfo:
         self.embed.set_author(name=self.gym.name, icon_url=self.gym.img)
 
     def get_view(self) -> Optional[RaidInfoView]:
-        if self.view and self.raid.boss:
-            view = RaidInfoView(self)
-        elif not self.view and self.post_to:
-            view = RaidInfoView(self)
-        else:
-            view = None
-
-        return view
+        if self.post_to:
+            return RaidInfoView(self)
+        return None
 
     async def update_buttons(self) -> NoReturn:
         if not self.view:
