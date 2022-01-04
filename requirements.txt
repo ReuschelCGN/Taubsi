@@ -1,4 +1,4 @@
-aiomysql==0.0.21
+aiomysql==0.0.22
 arrow==1.1.0
 dateparser==1.0.0
 fuzzywuzzy==0.18.0
