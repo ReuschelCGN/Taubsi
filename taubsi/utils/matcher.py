@@ -1,9 +1,9 @@
 # I took this from FoglyOgly/Meowth
 from enum import Enum
 
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
-from fuzzywuzzy import utils
+from thefuzz import fuzz
+from thefuzz import process
+from thefuzz import utils
 import re
 
 
