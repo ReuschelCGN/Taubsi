@@ -145,7 +145,7 @@ class RaidmessageView(discord.ui.View):
         self.add_item(discord.ui.Button(url=maps_link, label="Google Maps", style=discord.ButtonStyle.link))
 
         if raidmessage.raid.boss:
-            if raidmessage.raid.level == 6:
+            if ((raidmessage.raid.level == 6) or (raidmessage.raid.level == 7)):
                 pb_level = "MEGA"
             else:
                 pb_level = str(raidmessage.raid.level)
@@ -386,7 +386,7 @@ class RaidMessage:
                 with open(path, "r") as f:
                     pb_data = json.load(f)
             except FileNotFoundError:
-                if self.raid.level == 6:
+                if ((self.raid.level == 6) or (self.raid.level == 7)):
                     level = "MEGA"
                 else:
                     level = self.raid.level
