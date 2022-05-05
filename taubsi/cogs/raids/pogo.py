@@ -87,7 +87,7 @@ class BaseRaid:
             self.cp20 = calculate_cp(20, stats, [15, 15, 15])
             self.cp25 = calculate_cp(25, stats, [15, 15, 15])
         else:
-            if self.level != 6:
+            if ((self.level < 6) or (self.level > 7)):
                 self.name = f"Level {self.level} Ei"
             else:
                 self.name = "Mega Ei"
