@@ -7,6 +7,7 @@ services:
     command: python3 start_taubsi.py
     restart: always
     volumes:
+        - /etc/localtime:/etc/localtime:ro
         - ./Taubsi/config/config.json:/usr/src/app/config.json
         - ./Taubsi/config/geofence.json:/usr/src/app/geofence.json
         - ./Taubsi/config/servers.json:/usr/src/app/servers.json
