@@ -34,12 +34,12 @@ async def load_servers():
                 break
 
         gyms = await tb.queries.execute(f"select name, gym.gym_id, url, latitude, longitude from gymdetails left join gym on gym.gym_id = gymdetails.gym_id where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON({sql_fence})'), point(latitude, longitude))")
-        
+
         gym_list = []
         for name, gid, url, lat, lon in gyms:
             gym_list.append(Gym(gid, name, url, lat, lon))
         tb.gyms[settings["id"]] = gym_list
-        
+
         tb.friendcode_channels += settings["friendcodes_allowed"]
         tb.team_choose_channels += settings["team_choose"]
         tb.setup_channels += settings["setup"]
@@ -54,6 +54,3 @@ async def load_servers():
 
         guild = await tb.bot.fetch_guild(settings["id"])
         tb.guilds.append(guild)
-        
-        
-
