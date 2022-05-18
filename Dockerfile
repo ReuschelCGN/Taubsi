@@ -8,6 +8,6 @@ RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
-RUN pip install git+https://github.com/Rapptz/discord.py.git
+RUN pip install git+https://github.com/Rapptz/discord.py.git@45d498c1b76deaf3b394d17ccf56112fa691d160
 ENV PYTHONUNBUFFERED 1
 COPY . /usr/src/app/
