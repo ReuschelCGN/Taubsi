@@ -7,7 +7,7 @@ import arrow
 from math import floor
 
 from taubsi.taubsi_objects import tb
-from taubsi.cogs.raids.raidmessage import GMAPS_LINK, AMAPS_LINK, RaidMessage
+from taubsi.cogs.raids.raidmessage import GMAPS_LINK, AMAPS_LINK, REACTMAP_LINK, RaidMessage
 from taubsi.cogs.raids.pogo import ScannedRaid, Gym
 
 
@@ -150,10 +150,16 @@ class RaidInfo:
             if self.raid.boss:
                 self.embed.title += " " + tb.translate("Egg")
 
-        self.embed.description += "\n\n" + (
-            f"[Google Maps]({GMAPS_LINK.format(self.gym.lat, self.gym.lon)}) | "
-            f"[Apple Maps]({AMAPS_LINK.format(self.gym.lat, self.gym.lon)})"
-        )
+        if tb.maplink:
+            self.embed.description += "\n\n" + (
+                f"[React MAP]({REACTMAP_LINK.format(self.gym.id)}) | "
+                f"[Google Maps]({GMAPS_LINK.format(self.gym.lat, self.gym.lon)})"
+            )
+        else:
+            self.embed.description += "\n\n" + (
+                f"[Google Maps]({GMAPS_LINK.format(self.gym.lat, self.gym.lon)}) | "
+                f"[Apple Maps]({AMAPS_LINK.format(self.gym.lat, self.gym.lon)})"
+            )
 
         self.embed.set_author(name=self.gym.name, icon_url=self.gym.img)
 
