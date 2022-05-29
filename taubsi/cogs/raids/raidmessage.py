@@ -26,6 +26,7 @@ REMOTE_LIMIT = 10
 
 GMAPS_LINK = "https://www.google.com/maps/search/?api=1&query={},{}"
 AMAPS_LINK = "https://maps.apple.com/maps?daddr={},{}"
+REACTMAP_LINK = tb.maplink + "/id/gyms/{}"
 PBATTLER_LINK = (
     "https://www.pokebattler.com/raids/defenders/{}/levels/RAID_LEVEL_{}/attackers/levels/40/strategies/"
     "CINEMATIC_ATTACK_WHEN_POSSIBLE/DEFENSE_RANDOM_MC?sort=ESTIMATOR&weatherCondition=NO_WEATHER"
@@ -139,10 +140,16 @@ class RaidmessageView(discord.ui.View):
     def __init__(self, raidmessage):
         super().__init__()
 
-        maps_link = GMAPS_LINK.format(
-            raidmessage.gym.lat, raidmessage.gym.lon
-        )
-        self.add_item(discord.ui.Button(url=maps_link, label="Google Maps", style=discord.ButtonStyle.link))
+        if tb.maplink:
+            maps_link = REACTMAP_LINK.format(
+                raidmessage.gym.id
+            )
+            self.add_item(discord.ui.Button(url=maps_link, label="React MAP", style=discord.ButtonStyle.link))
+        else:
+            maps_link = GMAPS_LINK.format(
+                raidmessage.gym.lat, raidmessage.gym.lon
+            )
+            self.add_item(discord.ui.Button(url=maps_link, label="Google Maps", style=discord.ButtonStyle.link))
 
         if raidmessage.raid.boss:
             if ((raidmessage.raid.level == 6) or (raidmessage.raid.level == 7)):
