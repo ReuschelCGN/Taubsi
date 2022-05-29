@@ -10,6 +10,7 @@
         "team_choose": [
             1234567891234
         ],
+        "maplink": "https://reactmap.com",
         "raid_channels": [
             {
                 "id": 123456,
