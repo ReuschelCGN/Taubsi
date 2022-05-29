@@ -45,6 +45,8 @@ async def load_servers():
         tb.setup_channels += settings["setup"]
         tb.welcome_channels += settings["welcome"]
 
+        tb.maplink = settings["maplink"]
+
         for channel_settings in settings["raid_channels"]:
             tb.raid_channels[channel_settings["id"]] = channel_settings
 
