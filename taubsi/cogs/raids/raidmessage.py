@@ -154,6 +154,8 @@ class RaidmessageView(discord.ui.View):
         if raidmessage.raid.boss:
             if ((raidmessage.raid.level == 6) or (raidmessage.raid.level == 7)):
                 pb_level = "MEGA"
+            elif (raidmessage.raid.level == 8):
+                pb_level = "ULTRA_BEAST"
             else:
                 pb_level = str(raidmessage.raid.level)
             pb_link = PBATTLER_LINK.format(raidmessage.raid.pokebattler_name, pb_level)
