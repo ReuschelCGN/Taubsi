@@ -397,6 +397,8 @@ class RaidMessage:
             except FileNotFoundError:
                 if ((self.raid.level == 6) or (self.raid.level == 7)):
                     level = "MEGA"
+                elif (self.raid.level == 8):
+                    level = "ULTRA_BEAST"
                 else:
                     level = self.raid.level
                 url = f"https://fight.pokebattler.com/raids/defenders/{pb_mon_name}/levels/RAID_LEVEL_{level}/" \
