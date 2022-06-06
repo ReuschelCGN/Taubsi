@@ -87,10 +87,12 @@ class BaseRaid:
             self.cp20 = calculate_cp(20, stats, [15, 15, 15])
             self.cp25 = calculate_cp(25, stats, [15, 15, 15])
         else:
-            if ((self.level < 6) or (self.level > 7)):
-                self.name = f"Level {self.level} Ei"
-            else:
+            if ((self.level == 6) or (self.level == 7)):
                 self.name = "Mega Ei"
+            elif (self.level == 8):
+                self.name = "Ultradimensions Portal"
+            elif ((self.level < 6) or (self.level > 8)):
+                self.name = f"Level {self.level} Ei"
 
         self.egg_url = (
             f"https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/UICONS/raid/egg/{self.level}.png"
