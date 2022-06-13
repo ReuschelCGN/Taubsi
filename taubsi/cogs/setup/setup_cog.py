@@ -56,7 +56,7 @@ class Setup(commands.Cog):
         user.level = level
         await user.update()
 
-    @commands.command(aliases=["n"])
+    @commands.command(aliases=["n", "trainer"])
     @commands.check(is_guild)
     async def name(self, ctx, *, name):
         await self.reponse(ctx, tb.translate("setup_name").format(name))
@@ -93,7 +93,8 @@ class Setup(commands.Cog):
                 await user.from_command(ctx.author)
                 user.friendcode = str(arg)
                 await user.update()
-            await self.reponse(ctx, tb.translate("setup_saved_code"))
+                user.saved_code = tb.translate("setup_saved_code") + user.friendcode
+            await self.reponse(ctx, user.saved_code)
 
     @commands.command(aliases=["einladen", "einladung", "inv", "invite", "invitation"])
     @commands.check(is_guild)
