@@ -27,7 +27,7 @@
     "setup_set_level": "✅ Du bist nun Level {}",
     "setup_level_up": "🆙 Glückwunsch! Du bist nun Level {}",
     "setup_name": "✅ Dein Name ist jetzt {}",
-    "setup_saved_code": "✅ Dein Trainercode ist nun gespeichert",
+    "setup_saved_code": "✅ Dein Trainercode lautet ",
     "setup_team": "✅ Du bist jetzt in Team {}",
     "error_invalid_time": "❌ Ich konnte deiner Nachricht keine gültige Zeit entnehmen",
     "error_raid_past": "❌ Du kannst keinen Raid für die Vergangenheit ansetzen",
