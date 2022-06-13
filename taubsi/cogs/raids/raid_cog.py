@@ -156,6 +156,7 @@ class RaidCog(commands.Cog):
             pass
         await raidmessage.role.delete()
         self.raidmessages.pop(message.id)
+        await tb.intern_queries.execute(f"delete from raidmembers where message_id = {raidmessage.message.id}", result=False, commit=True)
         await tb.intern_queries.execute(f"delete from raids where message_id = {message.id}", result=False, commit=True)
 
     @tasks.loop(seconds=10)   
