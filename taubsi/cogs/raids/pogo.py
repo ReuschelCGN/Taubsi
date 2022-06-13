@@ -87,10 +87,12 @@ class BaseRaid:
             self.cp20 = calculate_cp(20, stats, [15, 15, 15])
             self.cp25 = calculate_cp(25, stats, [15, 15, 15])
         else:
-            if ((self.level == 6) or (self.level == 7)):
+            if (self.level == 6):
                 self.name = "Mega Ei"
+            elif (self.level == 7):
+                self.name = "Legendäres Mega Ei"
             elif (self.level == 8):
-                self.name = "Ultradimensions Portal"
+                self.name = "Ultrapforte"
             elif ((self.level < 6) or (self.level > 8)):
                 self.name = f"Level {self.level} Ei"
 
