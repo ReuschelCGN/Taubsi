@@ -27,7 +27,7 @@
     "setup_set_level": "✅ You're now level {}",
     "setup_level_up": "🆙 Congratulations! You're now level {}",
     "setup_name": "✅ Your name is now {}",
-    "setup_saved_code": "✅ Your trainercode is now ",
+    "setup_saved_code": "✅ Your trainercode is set as ",
     "setup_team": "✅ You're now part of team {}",
     "error_invalid_time": "❌ I couldn't find a valid time in your message",
     "error_raid_past": "❌ You can't schedule a raid in the past",
