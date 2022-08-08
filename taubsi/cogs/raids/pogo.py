@@ -5,6 +5,7 @@ from typing import Union
 
 import discord
 import arrow
+import json
 from PIL import Image, ImageDraw
 from pogodata.objects import Move
 from pogodata.pokemon import Pokemon
@@ -27,18 +28,32 @@ class Gym:
         self.active_raid = None
 
     async def get_active_raid(self, level: int) -> Union[BaseRaid, ScannedRaid]:
-        query = (
-            f"select level, pokemon_id, form, costume, start, end, move_1, move_2, evolution "
-            f"from raid "
-            f"where gym_id = '{self.id}'"
-        )
+        with open("config/config.json") as f:
+            self.config = json.load(f)
+        if (self.config["scanner"] == "rdm"):
+            query = (
+                f"select raid_level as level, raid_pokemon_id as pokemon_id, raid_pokemon_form as form, raid_pokemon_costume as costume, "
+                f"raid_battle_timestamp as start, raid_end_timestamp as end, raid_pokemon_move_1 as move_1, raid_pokemon_move_2 as move_2, "
+                f"raid_pokemon_evolution as evolution "
+                f"from gym "
+                f"where id = '{self.id}'"
+            )
+        else:
+            query = (
+                f"select level, pokemon_id, form, costume, start, end, move_1, move_2, evolution "
+                f"from raid "
+                f"where gym_id = '{self.id}'"
+            )
         result = await tb.queries.execute(query)
         db_level, mon_id, form, costume, start, end, move_1, move_2, evolution = result[0]
+        if (self.config["scanner"] == "rdm"):
+            if start is None:
+                start = arrow.utcnow()
         start = arrow.get(start)
         end = arrow.get(end)
 
         if end > arrow.utcnow() and db_level == level:
-            if mon_id:
+            if mon_id and mon_id > 0:
                 mon = tb.pogodata.get_mon(id=mon_id, form=form, costume=costume, temp_evolution_id=evolution)
                 move1 = tb.pogodata.get_move(id=move_1)
                 move2 = tb.pogodata.get_move(id=move_2)
