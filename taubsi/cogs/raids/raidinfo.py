@@ -111,7 +111,7 @@ class RaidInfo:
         start = arrow.get(start)
         end = arrow.get(end)
 
-        if mon_id is not None:
+        if mon_id is not None and mon_id > 0:
             self.hatched = True
 
         mon = tb.pogodata.get_mon(id=mon_id, form=form, costume=costume, temp_evolution_id=evolution)
