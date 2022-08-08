@@ -3,6 +3,7 @@ from taubsi.taubsi_objects import tb
 from taubsi.cogs.raids.raidinfo import RaidInfo
 
 import arrow
+import json
 from discord.ext import tasks, commands
 
 log = logging.getLogger("Raids")
@@ -12,6 +13,8 @@ class InfoCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.raid_infos = {}
+        with open("config/config.json") as f:
+            self.config = json.load(f)
 
         if tb.info_channels:
             gym_ids = []
@@ -24,12 +27,21 @@ class InfoCog(commands.Cog):
                         "guild_id": guild_id
                     }
 
-            self.query = (
-                f"select gym_id, level, pokemon_id, form, costume, start, end, move_1, move_2, evolution "
-                f"from raid "
-                f"where end > utc_timestamp() and gym_id in ({','.join(gym_ids)}) "
-                f"order by end asc "
-            )
+            if (self.config["scanner"] == "rdm"):
+                self.query = (
+                    f"select id as gym_id, raid_level as level, raid_pokemon_id as pokemon_id, raid_pokemon_form as form, raid_pokemon_costume as costume, "
+                    f"raid_battle_timestamp as start, raid_end_timestamp as end, raid_pokemon_move_1 as move_1, raid_pokemon_move_2 as move_2, raid_pokemon_evolution as evolution "
+                    f"from gym "
+                    f"where raid_end_timestamp > unix_timestamp() and id in ({','.join(gym_ids)}) "
+                    f"order by raid_end_timestamp asc "
+                )
+            else:
+                self.query = (
+                    f"select gym_id, level, pokemon_id, form, costume, start, end, move_1, move_2, evolution "
+                    f"from raid "
+                    f"where end > utc_timestamp() and gym_id in ({','.join(gym_ids)}) "
+                    f"order by end asc "
+                )
             self.info_loop.start()
 
     @tasks.loop(seconds=10)
