@@ -59,7 +59,7 @@ class TaubsiUser:
         if self.level is not None:
             level = f"[{self.level}] "
         return level + self.name
-    
+
     async def update(self):
         for guild in tb.guilds:
             try:
