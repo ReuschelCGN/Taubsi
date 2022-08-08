@@ -1,18 +1,18 @@
 version: '2.4'
 services:
   taubsi:
-    container_name: pokemon_taubsi
+    container_name: taubsi
     build:
-       context: ./Taubsi
+      context: ./Taubsi
     command: python3 start_taubsi.py
     restart: always
     volumes:
-        - /etc/localtime:/etc/localtime:ro
-        - ./Taubsi/config/config.json:/usr/src/app/config.json
-        - ./Taubsi/config/geofence.json:/usr/src/app/geofence.json
-        - ./Taubsi/config/servers.json:/usr/src/app/servers.json
-        - ./Taubsi/config/emotes.py:/usr/src/app/emotes.py
+      - /etc/localtime:/etc/localtime:ro
+      - ./Taubsi/config/config.json:/usr/src/app/config.json
+      - ./Taubsi/config/geofence.json:/usr/src/app/geofence.json
+      - ./Taubsi/config/servers.json:/usr/src/app/servers.json
+      - ./Taubsi/config/emotes.py:/usr/src/app/emotes.py
     depends_on:
-        - rocketdb
+      - scannerdbname
     networks:
-        - default
+      - default
