@@ -1,11 +1,12 @@
 {
     "bot_token": "",
     "trash_channel": 0,
+    "scanner": "mad or rdm",
     "db_host": "0.0.0.0",
     "db_port": 3306,
     "db_user": "user",
     "db_pass": "pass",
-    "db_dbname": "mad",
+    "db_dbname": "scannerdb",
     "db_taubsiname": "taubsi",
     "language": "german",
     "notify_role": "raidnachrichten"
