@@ -17,6 +17,8 @@ async def load_servers():
         raw_servers = json.load(f)
     with open("config/geofence.json", "r") as f:
         raw_fences = json.load(f)
+    with open("config/config.json") as f:
+        config = json.load(f)
 
     tb.gyms = {}
     tb.friendcode_channels = []
@@ -33,7 +35,10 @@ async def load_servers():
                 sql_fence = _convert_path_sql(fence["path"])
                 break
 
-        gyms = await tb.queries.execute(f"select name, gym.gym_id, url, latitude, longitude from gymdetails left join gym on gym.gym_id = gymdetails.gym_id where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON({sql_fence})'), point(latitude, longitude))")
+        if (config["scanner"] == "rdm"):
+            gyms = await tb.queries.execute(f"select name, id as gym_id, url, lat as latitude, lon as longitude from gym where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON({sql_fence})'), point(lat, lon))")
+        else:
+            gyms = await tb.queries.execute(f"select name, gym.gym_id, url, latitude, longitude from gymdetails left join gym on gym.gym_id = gymdetails.gym_id where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON({sql_fence})'), point(latitude, longitude))")
 
         gym_list = []
         for name, gid, url, lat, lon in gyms:
