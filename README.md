@@ -1,6 +1,6 @@
-# Taubsi 2.0
+# Taubsi 2.0.1 -> now with MAD & RDM Support
 
-This is a raid bot designed specifically to suit the needs of my community.
+This is a raid bot designed specifically to suit the needs of the pogo community.
 
 ## Features
 
