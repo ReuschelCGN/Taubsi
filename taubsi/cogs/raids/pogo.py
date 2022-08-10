@@ -79,6 +79,13 @@ class BaseRaid:
 
         self.egg_url = ""
         self.boss_url = ""
+        
+        with open("config/config.json") as f:
+            self.config = json.load(f)
+        if self.config["uicon_repo"]:
+            self.uicon_repo = self.config["uicon_repo"]
+        else:
+            self.uicon_repo = "https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/UICONS"
 
         available_bosses = tb.pogodata.raids[level]
         boss = None
@@ -112,20 +119,18 @@ class BaseRaid:
                 self.name = f"Level {self.level} Ei"
 
         self.egg_url = (
-            f"https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/UICONS/raid/egg/{self.level}.png"
+            f"{self.uicon_repo}/raid/egg/{self.level}.png"
         )
 
         if self.boss:
             self.boss_url = (
-                f"https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/UICONS/pokemon/"
-                f"{self.boss.id}.png"
+                f"{self.uicon_repo}/pokemon/{self.boss.id}.png"
             )
 
             # MEGAMONS
             if self.boss.temp_evolution_id == 1:
                 self.boss_url = (
-                    f"https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/UICONS/pokemon/"
-                    f"{self.boss.id}_e{self.boss.temp_evolution_id}.png"
+                    f"{self.uicon_repo}/pokemon/{self.boss.id}_e{self.boss.temp_evolution_id}.png"
                 )
 
         else:
