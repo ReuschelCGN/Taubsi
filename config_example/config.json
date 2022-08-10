@@ -9,5 +9,6 @@
     "db_dbname": "scannerdb",
     "db_taubsiname": "taubsi",
     "language": "german",
-    "notify_role": "raidnachrichten"
+    "notify_role": "raidnachrichten",
+    "uicon_repo": "https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/UICONS"
 }
