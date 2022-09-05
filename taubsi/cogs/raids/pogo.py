@@ -6,6 +6,7 @@ from typing import Union
 import discord
 import arrow
 import json
+import requests
 from PIL import Image, ImageDraw
 from pogodata.objects import Move
 from pogodata.pokemon import Pokemon
@@ -75,6 +76,7 @@ class BaseRaid:
         self.cp25 = 0
         self.boss = None
         self.name = "?"
+        self.form = None
         self.pokebattler_name = "UNOWN"
 
         self.egg_url = ""
@@ -85,7 +87,22 @@ class BaseRaid:
         if self.config["uicon_repo"]:
             self.uicon_repo = self.config["uicon_repo"]
         else:
-            self.uicon_repo = "https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/UICONS"
+            self.uicon_repo = "https://raw.githubusercontent.com/nileplumb/PkmnHomeIcons/master/UICONS"
+
+        if self.config["language"] == "english":
+            try:
+                self.localenames = requests.get("https://raw.githubusercontent.com/WatWowMap/pogo-translations/master/static/locales/en.json").json()
+            except Exception:
+                pass
+            if not self.localenames:
+                log.info(f"Error while requesting english locals from pogo-translations.")
+        else:
+            try:
+                self.localenames = requests.get("https://raw.githubusercontent.com/WatWowMap/pogo-translations/master/static/locales/de.json").json()
+            except Exception:
+                pass
+            if not self.localenames:
+                log.info(f"Error while requesting german locals from pogo-translations.")
 
         available_bosses = tb.pogodata.raids[level]
         boss = None
@@ -96,7 +113,17 @@ class BaseRaid:
     def make_boss(self, boss=None):
         if boss:
             self.boss = boss
-            self.name = self.boss.name
+
+            try:
+                self.formname = self.localenames[f"form_{self.boss.form}"]
+            except KeyError:
+                self.formname = None
+                log.info(f"Formname for Boss {self.boss} f{self.boss.form} missing!")
+
+            if self.boss.form > 0 and self.formname != "Normal" and self.formname is not None:
+                self.name = f"{self.boss.name} {self.formname}"
+            else:
+                self.name = self.boss.name
 
             self.pokebattler_name = self.boss.base_template
             if self.boss.temp_evolution_id > 0:
@@ -127,7 +154,21 @@ class BaseRaid:
                 f"{self.uicon_repo}/pokemon/{self.boss.id}.png"
             )
 
-            # MEGAMONS
+            # MONFORMS ICON WHEN FORM AND NOT NORMAL
+            try:
+                self.formname = self.localenames[f"form_{self.boss.form}"]
+            except KeyError:
+                self.formname = "na"
+            if self.boss.form > 0 and not self.formname.startswith("Normal") and not self.formname == "na":
+                self.boss_url = (
+                    f"{self.uicon_repo}/pokemon/{self.boss.id}_f{self.boss.form}.png"
+                )
+            else:
+                self.boss_url = (
+                    f"{self.uicon_repo}/pokemon/{self.boss.id}.png"
+                )
+
+            # MEGAMONS ICON
             if self.boss.temp_evolution_id == 1:
                 self.boss_url = (
                     f"{self.uicon_repo}/pokemon/{self.boss.id}_e{self.boss.temp_evolution_id}.png"
