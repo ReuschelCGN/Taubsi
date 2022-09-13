@@ -141,7 +141,7 @@ class BaseRaid:
             elif (self.level == 7):
                 self.name = "Legendäres Mega Ei"
             elif (self.level == 8):
-                self.name = "Ultrapforte"
+                self.name = "Ultrapforte geöffnet 🌀"
             elif ((self.level < 6) or (self.level > 8)):
                 self.name = f"Level {self.level} Ei"
 
