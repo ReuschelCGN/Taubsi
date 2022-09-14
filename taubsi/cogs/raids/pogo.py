@@ -137,25 +137,13 @@ class BaseRaid:
             self.cp25 = calculate_cp(25, stats, [15, 15, 15])
         else:
             if (self.level == 6):
-                if self.config["language"] == "english":
-                    self.name = "Mega Egg 🥚"
-                else:
-                    self.name = "Mega Ei 🥚"
+                self.name = f"Mega {tb.translate('Egg')} 🥚"
             elif (self.level == 7):
-                if self.config["language"] == "english":
-                    self.name = "Legendäres Mega Egg 🥚"
-                else:
-                    self.name = "Legendäres Mega Ei 🥚"
+                self.name = f"{tb.translate('legendary')} Mega {tb.translate('Egg')} 🥚"
             elif (self.level == 8):
-                if self.config["language"] == "english":
-                    self.name = "Ultra Wormhole opened 🌀"
-                else:
-                    self.name = "Ultrapforte geöffnet 🌀"
+                self.name = f"{tb.translate('ultra_wormhole_opend')} 🌀"
             elif ((self.level < 6) or (self.level > 8)):
-                if self.config["language"] == "english":
-                    self.name = f"Level {self.level} Egg 🥚"
-                else:
-                    self.name = f"Level {self.level} Ei 🥚"
+                self.name = f"Level {self.level} {tb.translate('Egg')} 🥚"
 
         self.egg_url = (
             f"{self.uicon_repo}/raid/egg/{self.level}.png"
