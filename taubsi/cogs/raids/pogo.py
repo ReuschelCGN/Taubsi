@@ -90,19 +90,9 @@ class BaseRaid:
             self.uicon_repo = "https://raw.githubusercontent.com/nileplumb/PkmnHomeIcons/master/UICONS"
 
         if self.config["language"] == "english":
-            try:
-                self.localenames = requests.get("https://raw.githubusercontent.com/WatWowMap/pogo-translations/master/static/locales/en.json").json()
-            except Exception:
-                pass
-            if not self.localenames:
-                log.info(f"Error while requesting english locals from pogo-translations.")
+            self.localenames = tb.localenames_en
         else:
-            try:
-                self.localenames = requests.get("https://raw.githubusercontent.com/WatWowMap/pogo-translations/master/static/locales/de.json").json()
-            except Exception:
-                pass
-            if not self.localenames:
-                log.info(f"Error while requesting german locals from pogo-translations.")
+            self.localenames = tb.localenames_de
 
         available_bosses = tb.pogodata.raids[level]
         boss = None
