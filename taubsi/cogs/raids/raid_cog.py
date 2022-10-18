@@ -192,5 +192,5 @@ class RaidCog(commands.Cog):
                 log.exception(e)
 
 
-def setup(bot):
-    bot.add_cog(RaidCog(bot))
+async def setup(bot):
+    await bot.add_cog(RaidCog(bot))
