@@ -1,4 +1,5 @@
-# Taubsi 2.01 -> with MAD & RDM Support and now with discord.py 2.01
+# Taubsi 2.01
+# -> with MAD & RDM Support and now with discord.py 2.01
 
 This is a raid bot designed specifically to suit the needs of the pogo community.
 
