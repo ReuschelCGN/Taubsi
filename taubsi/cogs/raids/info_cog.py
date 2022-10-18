@@ -89,5 +89,5 @@ class InfoCog(commands.Cog):
                 channel = await tb.bot.fetch_channel(channel_setting["id"])
                 await channel.purge(limit=1000)
 
-def setup(bot):
-    bot.add_cog(InfoCog(bot))
+async def setup(bot):
+    await bot.add_cog(InfoCog(bot))
