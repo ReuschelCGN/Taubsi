@@ -19,6 +19,14 @@ class TaubsiVars:
         translator_ = Translator(self.config.get("language", "german"))
         self.translate = translator_.translate
         self.reload_pogodata()
+        try:
+            self.localenames_en = requests.get("https://raw.githubusercontent.com/WatWowMap/pogo-translations/master/static/locales/en.json").json()
+        except Exception:
+            pass
+        try:
+            self.localenames_de = requests.get("https://raw.githubusercontent.com/WatWowMap/pogo-translations/master/static/locales/de.json").json()
+        except Exception:
+            pass
 
     def reload_pogodata(self):
         self.pogodata = PogoData(self.config.get("language", "german"))
