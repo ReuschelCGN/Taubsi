@@ -72,5 +72,5 @@ class AutoSetup(commands.Cog):
         await ctx.send(f"```\n{text}```")
 
 
-def setup(bot):
-    bot.add_cog(AutoSetup(bot))
+async def setup(bot):
+    await bot.add_cog(AutoSetup(bot))
