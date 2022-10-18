@@ -1,4 +1,5 @@
 import json
+import requests
 import discord
 from pogodata import PogoData
 from discord.ext import commands
