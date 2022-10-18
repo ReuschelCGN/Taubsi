@@ -29,5 +29,5 @@ class Loop(commands.Cog):
         if not tb.localenames_de:
             log.info(f"Error while requesting german locals from pogo-translations.")
 
-def setup(bot):
-    bot.add_cog(Loop(bot))
+async def setup(bot):
+    await bot.add_cog(Loop(bot))
