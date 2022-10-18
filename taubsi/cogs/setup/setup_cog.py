@@ -149,5 +149,5 @@ class Setup(commands.Cog):
         await user.update()
         await self.reponse(ctx, tb.translate("setup_team").format(team.name.lower().capitalize()))
 
-def setup(bot):
-    bot.add_cog(Setup(bot))
+async def setup(bot):
+    await bot.add_cog(Setup(bot))
