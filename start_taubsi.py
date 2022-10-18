@@ -25,7 +25,7 @@ async def on_ready():
     if tb.config.get("secret", False):
         await tb.bot.load_extension("taubsi.cogs.setup.auto_setup_cog")
     raidcog = tb.bot.get_cog("RaidCog")
-    await raidcog.final_init()
+    await raidcog.final_init("true")
     
     log.info("Fully loaded, ready for action")
     startup = False
