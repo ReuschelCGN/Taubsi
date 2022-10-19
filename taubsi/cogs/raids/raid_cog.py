@@ -53,7 +53,7 @@ class RaidCog(commands.Cog):
         asyncio.create_task(raidmessage.set_image())
 
         emojis = []
-        for number in range(1, 7):
+        for number in range(1, 9):
             emojis.append(NUMBER_EMOJIS[number])
         emojis += list(CONTROL_EMOJIS.values())
 
