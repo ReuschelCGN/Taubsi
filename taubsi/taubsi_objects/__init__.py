@@ -13,7 +13,7 @@ class TaubsiVars:
             self.config = json.load(f)
 
         intents = discord.Intents.all()
-        self.bot = commands.Bot(command_prefix="!", case_insensitive=1, intents=intents)
+        self.bot = commands.Bot(command_prefix=self.config["command_prefix"], case_insensitive=1, intents=intents)
         self.queries = Queries(self.config, self.config["db_dbname"])
         self.intern_queries = Queries(self.config, self.config["db_taubsiname"])
 
