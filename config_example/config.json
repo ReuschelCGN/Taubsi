@@ -1,5 +1,6 @@
 {
     "bot_token": "",
+    "command_prefix": "!",
     "trash_channel": 0,
     "scanner": "mad or rdm",
     "db_host": "0.0.0.0",
