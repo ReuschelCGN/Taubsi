@@ -134,7 +134,7 @@ class BaseRaid:
                 self.name = f"{tb.translate('ultra_wormhole_opend')} 🌀"
             elif (self.level == 9):
                 self.name = f"{tb.translate('elite')} {tb.translate('Egg')} ⚡🥚"
-            elif (self.level == 10:
+            elif (self.level == 10):
                 self.name = f"{tb.translate('primal')} {tb.translate('Egg')} ⚡🥚"
             elif ((self.level < 6) or (self.level > 10):
                 self.name = f"Level {self.level} {tb.translate('Egg')} 🥚"
